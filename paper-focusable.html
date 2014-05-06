@@ -21,7 +21,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link href="../polymer/polymer.html" rel="import">
 
-<polymer-element name="paper-focusable" attributes="pressed focused disabled" tabindex="0" on-down="{{downAction}}" on-up="{{upAction}}" on-focus="{{focusAction}}" on-blur="{{blurAction}}">
+<polymer-element name="paper-focusable" attributes="active focused disabled isToggle" tabindex="0" on-down="{{downAction}}" on-up="{{upAction}}" on-focus="{{focusAction}}" on-blur="{{blurAction}}">
 
   <script>
     Polymer('paper-focusable', {
@@ -29,13 +29,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       publish: {
 
         /**
-         * If true, the user is currently holding down the element.
+         * If true, the button is currently active either because the
+         * user is holding down the button, or the button is a toggle
+         * and is currently in the active state.
          *
-         * @attribute pressed
+         * @attribute active
          * @type boolean
          * @default false
          */
-        pressed: {value: false, reflect: true},
+        active: {value: false, reflect: true},
 
         /**
          * If true, the element currently has focus due to keyboard
@@ -54,9 +56,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @type boolean
          * @default false
          */
-        disabled: {value: false, reflect: true}
+        disabled: {value: false, reflect: true},
+
+        /**
+         * If true, the button toggles the active state with each tap.
+         * Otherwise, the button becomes active when the user is holding
+         * it down.
+         *
+         * @attribute isToggle
+         * @type boolean
+         * @default false
+         */
+        isToggle: {value: false, reflect: false}
 
       },
+
+      pressed: false,
 
       disabledChanged: function() {
         if (this.disabled) {
@@ -72,6 +87,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
 
         this.pressed = true;
+
+        if (this.isToggle) {
+          this.active = !this.active;
+        } else {
+          this.active = true;
+        }
       },
 
       upAction: function(e) {
@@ -80,6 +101,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
 
         this.pressed = false;
+
+        if (!this.isToggle) {
+          this.active = false;
+        }
       },
 
       focusAction: function() {
