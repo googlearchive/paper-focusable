@@ -21,7 +21,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link href="../polymer/polymer.html" rel="import">
 
-<polymer-element name="paper-focusable" attributes="active focused disabled isToggle" tabindex="0" on-down="{{downAction}}" on-up="{{upAction}}" on-focus="{{focusAction}}" on-blur="{{blurAction}}">
+<polymer-element name="paper-focusable" attributes="active focused disabled isToggle" tabindex="0" on-down="{{_downAction}}" on-up="{{_upAction}}" on-focus="{{focusAction}}" on-blur="{{blurAction}}">
 
   <script>
     Polymer('paper-focusable', {
@@ -50,6 +50,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         focused: {value: false, reflect: true},
 
         /**
+         * If true, the user is currently holding down the button.
+         *
+         * @attribute pressed
+         * @type boolean
+         * @default false
+         */
+        pressed: {value: false, reflect: true},
+
+        /**
          * If true, the user cannot interact with this element.
          *
          * @attribute disabled
@@ -71,8 +80,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       },
 
-      pressed: false,
-
       disabledChanged: function() {
         if (this.disabled) {
           this.removeAttribute('tabindex');
@@ -81,12 +88,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
 
-      downAction: function(e) {
+      _downAction: function(e) {
         if (this.disabled) {
           return;
         }
+        this.downAction(e);
+      },
 
+      downAction: function() {
         this.pressed = true;
+        this.focused = false;
 
         if (this.isToggle) {
           this.active = !this.active;
@@ -95,11 +106,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
 
-      upAction: function(e) {
+      _upAction: function(e) {
         if (this.disabled) {
           return;
         }
+        this.upAction(e);
+      },
 
+      upAction: function() {
         this.pressed = false;
 
         if (!this.isToggle) {
