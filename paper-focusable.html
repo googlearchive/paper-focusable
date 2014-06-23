@@ -89,7 +89,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _downAction: function(e) {
-        if (this.disabled) {
+        // See focusAction().
+        this._inIgnoredPress = this.disabled || e.button != 0;
+        if (this._inIgnoredPress) {
           return;
         }
         this.downAction(e);
@@ -122,7 +124,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _upAction: function(e) {
-        if (this.disabled) {
+        if (this._inIgnoredPress) {
+          this._inIgnoredPress = false;
           return;
         }
         this.upAction(e);
@@ -136,7 +139,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
 
-      focusAction: function() {
+      focusAction: function(e) {
+        // We don't want to focus the element when right clicked, but focus
+        // events don't provide detail about the action that triggered them. So,
+        // we track it via a little extra state.
+        //
+        // The event order is down, focus, up.
+        if (this._inIgnoredPress) {
+          e.preventDefault();
+          return;
+        }
+
         if (!this.pressed) {
           // Only render the "focused" state if the element gains focus due to
           // keyboard navigation.
