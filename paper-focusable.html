@@ -21,7 +21,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link href="../polymer/polymer.html" rel="import">
 
-<polymer-element name="paper-focusable" attributes="active focused disabled isToggle" tabindex="0" on-down="{{downAction}}" on-up="{{upAction}}" on-focus="{{focusAction}}" on-blur="{{blurAction}}" on-contextmenu="{{contextMenuAction}}">
+<polymer-element name="paper-focusable" attributes="active focused disabled isToggle tabindex" on-down="{{downAction}}" on-up="{{upAction}}" on-focus="{{focusAction}}" on-blur="{{blurAction}}" on-contextmenu="{{contextMenuAction}}">
 
   <template>
     <style>
@@ -85,7 +85,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @type boolean
          * @default false
          */
-        isToggle: {value: false, reflect: false}
+        isToggle: {value: false, reflect: false},
+		
+        /**
+         * Enable standard `tabindex` attribute.
+         *
+         * @attribute tabindex
+         * @type integer
+         * @default 0
+         */
+        tabindex: {value: 0, reflect: true}
 
       },
 
@@ -93,7 +102,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if (this.disabled) {
           this.removeAttribute('tabindex');
         } else {
-          this.setAttribute('tabindex', 0);
+          this.setAttribute('tabindex', this.tabindex);
         }
       },
 
